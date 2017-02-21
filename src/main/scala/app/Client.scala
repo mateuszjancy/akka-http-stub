@@ -17,7 +17,6 @@ import scala.util.Try
 
 trait Client {
   def get[T](url: String)(implicit unmarshaller: akka.http.scaladsl.unmarshalling.Unmarshaller[ResponseEntity, T]): Future[T]
-  def getFlow[T](url: String)(implicit unmarshaller: akka.http.scaladsl.unmarshalling.Unmarshaller[ResponseEntity, T]): Flow[T]
 }
 
 object Client {
@@ -31,10 +30,5 @@ object Client {
       response <- Http().singleRequest(HttpRequest(uri = url))
       items <- Unmarshal(response.entity).to[T]
     } yield items
-
-    def getFlow[T](url: String)(implicit unmarshaller: akka.http.scaladsl.unmarshalling.Unmarshaller[ResponseEntity, T]) = {
-      val client: Flow[(HttpRequest, Nothing), (Try[HttpResponse], Nothing), HostConnectionPool] = Http().cachedHostConnectionPoolHttps("localhost", 8080)
-    }
-
   }
 }
